@@ -108,16 +108,20 @@ export class ServiceManager {
     async deleteService(id) {
         const services = await this.readServices();
 
-        const filtered = services.filter(
-            (service) => service.id !== Number(id)
+        const index = services.findIndex(
+            (service) => service.id === Number(id)
         );
 
-        if (filtered.length === services.length) {
-            return false;
+        if (index === -1) {
+            return null;
         }
 
-        await this.writeServices(filtered);
+        const deletedService = services[index];
 
-        return true;
+        services.splice(index, 1);
+
+        await this.writeServices(services);
+
+        return deletedService;
     }
 }

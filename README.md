@@ -1,112 +1,162 @@
-Proyecto Backend 1
-Descripción
+# Proyecto Backend 1
 
-Proyecto Node.js desarrollado para gestionar servicios de un sistema de turnos y reservas.
+API REST desarrollada con Node.js y Express para gestionar servicios de un sistema de turnos y reservas.
 
-La aplicación utiliza Node.js con módulos ESM, Express y dotenv. Los servicios se gestionan mediante la clase ServiceManager y se almacenan en el archivo src/data/services.json.
+## Tecnologías
+- Node.js
+- Express
+- JavaScript ESM
+- dotenv
+- JSON
+- Instalación
 
-Instalación
-
-Clonar el repositorio y ejecutar:
+Para instalar las dependencias:
 
 npm install
-Variables de entorno
 
-Crear un archivo .env en la raíz del proyecto con:
+## Variables de entorno
+
+Crear un archivo .env en la raíz del proyecto con las siguientes variables:
 
 PORT=8080
 NODE_ENV=development
 
-El archivo .env no debe subirse al repositorio.
+El archivo .env no se sube al repositorio.
 
-También se incluye .env.example como referencia de las variables necesarias.
+El archivo .env.example sirve como referencia para configurar estas variables.
 
 Ejecución
 
-Para iniciar la aplicación:
+Iniciar el servidor con:
 
 npm start
 
-El servidor se ejecutará en:
+El servidor estará disponible en:
 
 http://localhost:8080
-Recurso services
 
-Cada servicio tiene la siguiente estructura:
+Estructura
+
+src/
+
+- app.js
+- config/env.config.js
+- managers/ServiceManager.js
+- routes/services.router.js
+- data/services.json
+
+Otros archivos:
+
+- .env.example
+- .gitignore
+- package.json
+- package-lock.json
+- README.md
+
+## Recurso services
+
+Los servicios tienen los siguientes datos:
+
+- id
+- name
+- description
+- duration
+- price
+- category
+- available
+
+El id se genera automáticamente al crear un servicio.
+
+## Endpoints
+
+GET /api/services
+
+Obtiene todos los servicios.
+
+GET /api/services?category=salud
+
+Filtra los servicios por categoría.
+
+GET /api/services?available=true
+
+Filtra los servicios por disponibilidad.
+
+GET /api/services/:sid
+
+Obtiene un servicio por su id.
+
+POST /api/services
+
+Crea un nuevo servicio.
+
+Ejemplo:
 
 {
-  id,
-  name,
-  description,
-  duration,
-  price,
-  category,
-  available
+"name": "Consulta general",
+"description": "Consulta con profesional",
+"duration": 30,
+"price": 500,
+"category": "salud",
+"available": true
 }
 
-Los servicios se almacenan en:
+El id no se envía en el body porque se genera automáticamente.
 
-src/data/services.json
-ServiceManager
+PUT /api/services/:sid
 
-La clase ServiceManager permite gestionar los servicios mediante los siguientes métodos.
+Actualiza un servicio existente.
 
-getServices()
+Ejemplo:
 
-Devuelve todos los servicios registrados.
+{
+"price": 600,
+"available": false
+}
 
-const services = await serviceManager.getServices();
-getServiceById(id)
+El id no puede modificarse.
 
-Busca un servicio por su ID.
-
-const service = await serviceManager.getServiceById(1);
-
-Devuelve el servicio encontrado o null si no existe.
-
-addService(serviceData)
-
-Agrega un nuevo servicio.
-
-El id se genera automáticamente y no debe enviarse desde afuera.
-
-const service = await serviceManager.addService({
-  name: "Consulta general",
-  description: "Consulta con profesional",
-  duration: 30,
-  price: 500,
-  category: "General",
-  available: true
-});
-
-Los campos name, description, duration, price, category y available son obligatorios.
-
-updateService(id, updatedData)
-
-Actualiza los datos de un servicio existente sin modificar su ID.
-
-const service = await serviceManager.updateService(1, {
-  price: 600,
-  available: false
-});
-deleteService(id)
+DELETE /api/services/:sid
 
 Elimina un servicio existente.
 
-const deleted = await serviceManager.deleteService(1);
-Estructura del proyecto
-proyecto-backend-1/
-├── src/
-│   ├── app.js
-│   ├── config/
-│   │   └── env.config.js
-│   ├── managers/
-│   │   └── ServiceManager.js
-│   └── data/
-│       └── services.json
-├── .env
-├── .env.example
-├── .gitignore
-├── package.json
-├── package-lock.json
-└── README.md
+## ServiceManager
+
+La clase ServiceManager contiene la lógica para gestionar los servicios.
+
+Métodos principales:
+
+- getServices()
+- getServiceById(id)
+- addService(serviceData)
+- updateService(id, updatedData)
+- deleteService(id)
+
+Las rutas de Express utilizan ServiceManager para realizar las operaciones.
+
+## Códigos de respuesta
+
+200 - Operación realizada correctamente.
+201 - Servicio creado correctamente.
+400 - Datos incompletos.
+404 - Servicio no encontrado.
+Pruebas
+
+Los endpoints fueron probados utilizando Postman.
+
+Se probaron:
+
+- Crear un servicio.
+- Obtener todos los servicios.
+- Buscar un servicio por id.
+- Filtrar por categoría.
+- Filtrar por disponibilidad.
+- Actualizar un servicio.
+- Eliminar un servicio.
+- Buscar un servicio inexistente.
+- Crear un servicio con datos incompletos.
+
+## Nota
+
+El archivo .env se utiliza únicamente de forma local y está incluido en .gitignore.
+
+El archivo .env.example se incluye como referencia para configurar las variables de entorno.
