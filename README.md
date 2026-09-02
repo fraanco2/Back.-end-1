@@ -1,14 +1,17 @@
 # Proyecto Backend 1
 
-API REST desarrollada con Node.js y Express para gestionar servicios de un sistema de turnos y reservas.
+API REST desarrollada con Node.js y Express para gestionar servicios y reservas de un sistema de turnos.
 
 ## Tecnologías
+
 - Node.js
 - Express
 - JavaScript ESM
 - dotenv
 - JSON
-- Instalación
+- FileSystem
+
+## Instalación
 
 Para instalar las dependencias:
 
@@ -25,7 +28,7 @@ El archivo .env no se sube al repositorio.
 
 El archivo .env.example sirve como referencia para configurar estas variables.
 
-Ejecución
+## Ejecución
 
 Iniciar el servidor con:
 
@@ -35,15 +38,33 @@ El servidor estará disponible en:
 
 http://localhost:8080
 
-Estructura
+## Arquitectura
+
+La API está organizada en tres capas principales:
+
+- Routes: define los endpoints y los conecta con los controllers.
+- Controllers: reciben las solicitudes HTTP, utilizan los parámetros, query y body, llaman a los managers y generan las respuestas.
+- Managers: contienen la lógica de negocio y gestionan la persistencia de los datos en archivos JSON.
+
+Flujo de la aplicación:
+
+Cliente → Router → Controller → Manager → JSON
+
+## Estructura
 
 src/
 
 - app.js
+- server.js
 - config/env.config.js
+- controllers/services.controller.js
+- controllers/bookings.controller.js
 - managers/ServiceManager.js
+- managers/BookingManager.js
 - routes/services.router.js
+- routes/bookings.router.js
 - data/services.json
+- data/bookings.json
 
 Otros archivos:
 
@@ -67,7 +88,7 @@ Los servicios tienen los siguientes datos:
 
 El id se genera automáticamente al crear un servicio.
 
-## Endpoints
+## Endpoints de servicios
 
 GET /api/services
 
@@ -119,6 +140,41 @@ DELETE /api/services/:sid
 
 Elimina un servicio existente.
 
+## Recurso bookings
+
+Las reservas tienen los siguientes datos:
+
+- id
+- clientName
+- clientEmail
+- date
+- time
+- status
+- services
+
+## Endpoints de reservas
+
+POST /api/bookings
+
+Crea una nueva reserva.
+
+GET /api/bookings/:bid
+
+Obtiene una reserva por su id.
+
+POST /api/bookings/:bid/services/:sid
+
+Agrega un servicio a una reserva.
+
+Si el servicio ya existe en la reserva, se incrementa su quantity.
+
+Ejemplo:
+
+{
+"service": 1,
+"quantity": 1
+}
+
 ## ServiceManager
 
 La clase ServiceManager contiene la lógica para gestionar los servicios.
@@ -131,29 +187,44 @@ Métodos principales:
 - updateService(id, updatedData)
 - deleteService(id)
 
-Las rutas de Express utilizan ServiceManager para realizar las operaciones.
+## BookingManager
+
+La clase BookingManager contiene la lógica para gestionar las reservas.
+
+Métodos principales:
+
+- createBooking(bookingData)
+- getBookingById(id)
+- addServiceToBooking(bookingId, serviceId)
 
 ## Códigos de respuesta
 
 200 - Operación realizada correctamente.
-201 - Servicio creado correctamente.
-400 - Datos incompletos.
-404 - Servicio no encontrado.
-Pruebas
+
+201 - Recurso creado correctamente.
+
+400 - Datos incompletos o incorrectos.
+
+404 - Recurso no encontrado.
+
+500 - Error interno del servidor.
+
+## Pruebas
 
 Los endpoints fueron probados utilizando Postman.
 
 Se probaron:
 
 - Crear un servicio.
-- Obtener todos los servicios.
-- Buscar un servicio por id.
-- Filtrar por categoría.
-- Filtrar por disponibilidad.
+- Obtener un servicio.
 - Actualizar un servicio.
 - Eliminar un servicio.
+- Crear una reserva.
+- Obtener una reserva.
+- Agregar un servicio a una reserva.
+- Incrementar quantity al agregar nuevamente el mismo servicio.
 - Buscar un servicio inexistente.
-- Crear un servicio con datos incompletos.
+- Buscar una reserva inexistente.
 
 ## Nota
 
