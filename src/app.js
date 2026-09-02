@@ -1,6 +1,6 @@
 import express from "express";
 import servicesRouter from "./routes/services.router.js";
-import { env } from "./config/env.config.js";
+import bookingsRouter from "./routes/bookings.router.js";
 
 const app = express();
 
@@ -11,8 +11,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/services", servicesRouter);
+app.use("/api/bookings", bookingsRouter);
 
-app.listen(env.port, () => {
-  console.log(`Servidor escuchando en el puerto ${env.port}`);
-  console.log(`Entorno: ${env.nodeEnv}`);
-});
+export default app;
