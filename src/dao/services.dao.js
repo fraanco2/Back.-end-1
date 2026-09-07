@@ -1,87 +1,28 @@
-import fs from "fs/promises";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { ServiceModel } from "./models/service.model.js";
 
 export class ServicesDAO {
-    constructor(filePath = path.join(__dirname, "../data/services.json")) {
-        this.path = filePath;
-    }
-
     async getAll() {
-        try {
-            const data = await fs.readFile(this.path, "utf-8");
-            return JSON.parse(data);
-        } catch (error) {
-            console.log("Error al leer services.json:", error.message);
-            return [];
-        }
+        return await ServiceModel.find().lean();
     }
 
     async getById(id) {
-        const services = await this.getAll();
-
-        return services.find(
-            (service) => service.id === Number(id)
-        ) || null;
+        return await ServiceModel.findById(id).lean();
     }
 
     async create(service) {
-        const services = await this.getAll();
-
-        services.push(service);
-
-        await fs.writeFile(
-            this.path,
-            JSON.stringify(services, null, 2)
-        );
-
-        return service;
+        const newService = await ServiceModel.create(service);
+        return newService.toObject();
     }
 
     async update(id, updatedService) {
-        const services = await this.getAll();
-
-        const index = services.findIndex(
-            (service) => service.id === Number(id)
-        );
-
-        if (index === -1) {
-            return null;
-        }
-
-        services[index] = updatedService;
-
-        await fs.writeFile(
-            this.path,
-            JSON.stringify(services, null, 2)
-        );
-
-        return services[index];
+        return await ServiceModel.findByIdAndUpdate(
+            id,
+            updatedService,
+            { new: true }
+        ).lean();
     }
 
     async delete(id) {
-        const services = await this.getAll();
-
-        const index = services.findIndex(
-            (service) => service.id === Number(id)
-        );
-
-        if (index === -1) {
-            return null;
-        }
-
-        const deletedService = services[index];
-
-        services.splice(index, 1);
-
-        await fs.writeFile(
-            this.path,
-            JSON.stringify(services, null, 2)
-        );
-
-        return deletedService;
+        return await ServiceModel.findByIdAndDelete(id).lean();
     }
 }

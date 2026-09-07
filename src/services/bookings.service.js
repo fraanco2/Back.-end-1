@@ -57,14 +57,14 @@ export class BookingsService {
         }
 
         const existingService = booking.services.find(
-            (item) => item.service === Number(serviceId)
+            (item) => item.service._id.toString() === serviceId
         );
 
         if (existingService) {
             existingService.quantity += 1;
         } else {
             booking.services.push({
-                service: Number(serviceId),
+                service: serviceId,
                 quantity: 1
             });
         }
