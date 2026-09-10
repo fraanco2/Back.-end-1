@@ -7,6 +7,10 @@ export class BookingsService {
         this.servicesRepository = new ServicesRepository();
     }
 
+    async getBookings() {
+        return this.repository.getAll();
+}
+
     async createBooking(bookingData) {
         const {
             clientName,

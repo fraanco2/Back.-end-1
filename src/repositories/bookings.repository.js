@@ -5,6 +5,10 @@ export class BookingsRepository {
         this.dao = new BookingsDAO();
     }
 
+    async getAll() {
+        return this.dao.getAll();
+    }
+
     async create(booking) {
         return this.dao.create(booking);
     }

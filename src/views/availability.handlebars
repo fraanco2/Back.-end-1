@@ -1,0 +1,17 @@
+<h2>Disponibilidad y reservas</h2>
+
+<div id="availability-container">
+    {{#if bookings}}
+        {{#each bookings}}
+            <article class="booking">
+                <h3>{{clientName}}</h3>
+                <p><strong>Email:</strong> {{clientEmail}}</p>
+                <p><strong>Fecha:</strong> {{date}}</p>
+                <p><strong>Hora:</strong> {{time}}</p>
+                <p><strong>Estado:</strong> {{status}}</p>
+            </article>
+        {{/each}}
+    {{else}}
+        <p>No hay reservas registradas.</p>
+    {{/if}}
+</div>

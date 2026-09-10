@@ -51,14 +51,7 @@ export class ServicesService {
             throw new Error("Faltan campos obligatorios del servicio");
         }
 
-        const services = await this.repository.getAll();
-
-        const id = services.length > 0
-            ? services[services.length - 1].id + 1
-            : 1;
-
         const newService = {
-            id,
             name,
             description,
             duration,
@@ -78,9 +71,7 @@ export class ServicesService {
         }
 
         const updatedService = {
-            ...service,
-            ...updatedData,
-            id: service.id
+            ...updatedData
         };
 
         return this.repository.update(id, updatedService);
