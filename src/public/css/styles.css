@@ -1,0 +1,82 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    color: #333;
+}
+
+header {
+    background: #1f2937;
+    color: white;
+    padding: 24px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+main {
+    width: min(1100px, 90%);
+    margin: 40px auto;
+}
+
+h2 {
+    margin-bottom: 25px;
+    color: #1f2937;
+}
+
+#services-container,
+#availability-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.service,
+.booking {
+    background: white;
+    padding: 22px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e7eb;
+}
+
+.service h3,
+.booking h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #2563eb;
+}
+
+.service p,
+.booking p {
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+.service strong,
+.booking strong {
+    color: #1f2937;
+}
+
+@media (max-width: 600px) {
+    main {
+        width: 92%;
+        margin: 25px auto;
+    }
+
+    header h1 {
+        font-size: 23px;
+    }
+
+    .service,
+    .booking {
+        padding: 18px;
+    }
+}
