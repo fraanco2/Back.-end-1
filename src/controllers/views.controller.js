@@ -6,12 +6,12 @@ const bookingsService = new BookingsService();
 
 export const getServicesView = async (req, res) => {
     try {
-        const services = await servicesService.getServices();
+       const result = await servicesService.getServices();
 
-        res.render("services", {
-            title: "Servicios",
-            services
-        });
+       res.render("services", {
+           title: "Servicios",
+           services: result.services
+});
     } catch (error) {
         res.status(500).send("Error al cargar los servicios");
     }

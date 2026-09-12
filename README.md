@@ -12,6 +12,7 @@ El proyecto utiliza MongoDB con Mongoose para la persistencia de datos y una arq
 * MongoDB
 * Mongoose
 * dotenv
+* Zod
 * Handlebars
 * Socket.io
 * Node.js Test Runner
@@ -52,24 +53,7 @@ El proyecto utiliza una arquitectura en capas:
 Router → Controller → Service → Repository → DAO → Model → MongoDB
 ```
 
-Cada capa tiene una responsabilidad específica y la lógica de negocio se encuentra en los Services.
-
-## Estructura principal
-
-```text
-src/
-├── config/
-├── controllers/
-├── services/
-├── repositories/
-├── dao/
-│   └── models/
-├── routes/
-├── views/
-└── public/
-
-test/
-```
+La validación de datos se realiza mediante middleware con Zod antes de acceder a MongoDB.
 
 ## API REST
 
@@ -83,14 +67,71 @@ PUT    /api/services/:sid
 DELETE /api/services/:sid
 ```
 
-También permite filtrar por:
+### Filtros
+
+Filtrar por categoría:
 
 ```text
-/api/services?category=salud
-/api/services?available=true
+GET /api/services?category=General
 ```
 
-### Reservas
+Filtrar por disponibilidad:
+
+```text
+GET /api/services?available=true
+```
+
+### Paginación
+
+```text
+GET /api/services?page=1&limit=10
+```
+
+La respuesta incluye:
+
+```text
+totalResults
+currentPage
+limit
+totalPages
+hasPrevPage
+hasNextPage
+```
+
+### Ordenamiento
+
+Ordenar por precio ascendente:
+
+```text
+GET /api/services?sortBy=price&order=asc
+```
+
+Ordenar por precio descendente:
+
+```text
+GET /api/services?sortBy=price&order=desc
+```
+
+Los parámetros pueden combinarse:
+
+```text
+GET /api/services?category=General&available=true&page=1&limit=5&sortBy=price&order=desc
+```
+
+## Validación con Zod
+
+Se validan los datos antes de llegar a MongoDB.
+
+Se aplica validación a:
+
+* creación de servicios;
+* actualización de servicios;
+* creación de reservas;
+* agregado de servicios a reservas.
+
+Los datos inválidos generan una respuesta `400 Bad Request` con un mensaje descriptivo.
+
+## Reservas
 
 ```text
 POST /api/bookings
@@ -98,9 +139,17 @@ GET  /api/bookings/:bid
 POST /api/bookings/:bid/services/:sid
 ```
 
-Las reservas utilizan referencias ObjectId hacia los servicios y `populate()` de Mongoose.
+Las reservas almacenan los servicios mediante referencias `ObjectId`.
 
-### Mensajes
+Al consultar una reserva:
+
+```text
+GET /api/bookings/:bid
+```
+
+se utiliza `populate()` para obtener los datos completos de los servicios relacionados.
+
+## Mensajes
 
 ```text
 GET    /api/messages
@@ -111,18 +160,14 @@ DELETE /api/messages/:mid
 
 ## Vistas
 
-Se incorporaron vistas server-side con Handlebars:
-
 ```text
 GET /views/services
 GET /views/availability
 ```
 
-Las vistas obtienen los datos desde MongoDB mediante la arquitectura del proyecto.
+Las vistas utilizan Handlebars y obtienen los datos desde MongoDB.
 
 ## Socket.io
-
-Se incorporó comunicación en tiempo real.
 
 Al crear un servicio mediante la API REST se emite el evento `serviceCreated`, actualizando automáticamente la vista de servicios sin necesidad de recargar la página.
 
