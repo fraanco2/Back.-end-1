@@ -5,8 +5,8 @@ export class ServicesRepository {
         this.dao = new ServicesDAO();
     }
 
-    async getAll() {
-        return this.dao.getAll();
+    async getAll(filters = {}) {
+        return this.dao.getAll(filters);
     }
 
     async getById(id) {

@@ -6,64 +6,24 @@ export class ServicesService {
     }
 
     async getServices(filters = {}) {
-    let services = await this.repository.getAll();
+        const result = await this.repository.getAll(filters);
 
-    const {
-        category,
-        available,
-        page = 1,
-        limit = 10,
-        sortBy,
-        order = "asc"
-    } = filters;
-
-    if (category) {
-        services = services.filter(
-            (service) =>
-                service.category?.toLowerCase() === category.toLowerCase()
+        const totalPages = Math.ceil(
+            result.totalResults / result.limit
         );
-    }
 
-    if (available !== undefined) {
-        services = services.filter(
-            (service) => service.available === (available === "true")
-        );
-    }
-
-    if (sortBy) {
-        services.sort((a, b) => {
-            if (a[sortBy] < b[sortBy]) {
-                return order === "desc" ? 1 : -1;
+        return {
+            services: result.services,
+            pagination: {
+                totalResults: result.totalResults,
+                currentPage: result.currentPage,
+                limit: result.limit,
+                totalPages,
+                hasPrevPage: result.currentPage > 1,
+                hasNextPage: result.currentPage < totalPages
             }
-
-            if (a[sortBy] > b[sortBy]) {
-                return order === "desc" ? -1 : 1;
-            }
-
-            return 0;
-        });
+        };
     }
-
-    const totalResults = services.length;
-    const currentPage = Math.max(Number(page), 1);
-    const pageLimit = Math.max(Number(limit), 1);
-    const totalPages = Math.ceil(totalResults / pageLimit);
-
-    const start = (currentPage - 1) * pageLimit;
-    const paginatedServices = services.slice(start, start + pageLimit);
-
-    return {
-        services: paginatedServices,
-        pagination: {
-            totalResults,
-            currentPage,
-            limit: pageLimit,
-            totalPages,
-            hasPrevPage: currentPage > 1,
-            hasNextPage: currentPage < totalPages
-        }
-    };
-}
 
     async getServiceById(id) {
         return this.repository.getById(id);
